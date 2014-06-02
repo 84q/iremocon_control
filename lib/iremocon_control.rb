@@ -20,6 +20,7 @@ module IRemoconControl
       @host = host
       @port = port.to_i
       @logger = (logger.is_a?(Logger) ? logger : Logger.new(logger))
+      @logger.level = Logger::WARN
     end
     
     #
