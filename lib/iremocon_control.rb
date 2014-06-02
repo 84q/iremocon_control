@@ -27,7 +27,7 @@ module IRemoconControl
     #
     def au
       reply = send("*au")
-      reply[1] == "ok" ? true : get_error(reply)
+      reply[0] == "ok" ? true : get_error(reply)
     end
     
     #
