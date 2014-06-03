@@ -27,7 +27,7 @@ module IRemoconControl
     # 接続の確認用コマンド
     #
     def au
-      reply = send("*au")
+      reply = send_cmd("*au")
       reply[0] == "ok" ? true : get_error(reply)
     end
     
@@ -35,7 +35,7 @@ module IRemoconControl
     # 赤外線発光用コマンド
     #
     def is(remocon_id)
-      reply = send("*is", remocon_id)
+      reply = send_cmd("*is", remocon_id)
       reply[1] == "ok" ? true : get_error(reply)
     end
   
@@ -43,7 +43,7 @@ module IRemoconControl
     # リモコン学習開始用コマンド
     #
     def ic(remocon_id)
-      reply = send("*ic", remocon_id)
+      reply = send_cmd("*ic", remocon_id)
       reply[1] == "ok" ? true : get_error(reply)
     end
   
@@ -51,7 +51,7 @@ module IRemoconControl
     # リモコン学習中止用コマンド
     #
     def cc
-      reply = send("*cc")
+      reply = send_cmd("*cc")
       reply[1] == "ok" ? true : get_error(reply)
     end
   
@@ -59,7 +59,7 @@ module IRemoconControl
     # タイマーセット用コマンド
     #
     def tm(remocon_id, time, repeat_interval = 0)
-      reply = send("*tm", remocon_id, time.to_i, repeat_interval)
+      reply = send_cmd("*tm", remocon_id, time.to_i, repeat_interval)
       reply[1] == "ok" ? true : get_error(reply)
     end
   
@@ -67,7 +67,7 @@ module IRemoconControl
     # タイマー一覧取得用コマンド
     #
     def tl
-      reply = send("*tl")
+      reply = send_cmd("*tl")
       reply[1] == "ok" ? reply[3..-1].map(&:to_i).each_slice(4).to_a : get_error(reply)
     end
   
@@ -75,7 +75,7 @@ module IRemoconControl
     # タイマー解除用コマンド
     #
     def td(timer_id)
-      reply = send("*td", timer_id)
+      reply = send_cmd("*td", timer_id)
       reply[1] == "ok" ? true : get_error(reply)
     end
   
@@ -83,7 +83,7 @@ module IRemoconControl
     # 現在時刻設定用コマンド
     #
     def ts(time)
-      reply = send("*ts", time.to_i)
+      reply = send_cmd("*ts", time.to_i)
       reply[1] == "ok" ? true : get_error(reply)
     end
   
@@ -91,7 +91,7 @@ module IRemoconControl
     # 現在時刻取得用コマンド
     #
     def tg
-      reply = send("*tg")
+      reply = send_cmd("*tg")
       reply[1] == "ok" ? reply[2].to_i : get_error(reply)
     end
   
@@ -99,15 +99,15 @@ module IRemoconControl
     # ファームバージョン番号の取得用コマンド
     #
     def vr
-      reply = send("*vr")
+      reply = send_cmd("*vr")
       reply[1] == "err" ? get_error(reply) : reply[0]
     end
     
     private
     
-    def send(*cmds)
+    def send_cmd(*cmds)
       begin
-        reply = _send(*cmds)
+        reply = _send_cmd(*cmds)
       rescue => e
         @logger.warn "#{cmds} -> #{e}"
         raise e
@@ -116,7 +116,7 @@ module IRemoconControl
       reply
     end
     
-    def _send(*cmds)
+    def _send_cmd(*cmds)
       telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
       
       code = ""
