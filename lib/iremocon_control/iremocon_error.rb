@@ -3,7 +3,7 @@
 require 'yaml'
 
 module IRemoconControl
-  class IRemoconError
+  class IRemoconError < StandardError
     FILE = File.expand_path(File.dirname(__FILE__)) + "/iremocon_error.yml"
     DEF = YAML.load_file(FILE)
     

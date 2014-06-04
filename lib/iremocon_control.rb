@@ -28,7 +28,7 @@ module IRemoconControl
     #
     def au
       reply = send_cmd("*au")
-      reply[0] == "ok" ? true : get_error(reply)
+      true
     end
     
     #
@@ -36,7 +36,7 @@ module IRemoconControl
     #
     def is(remocon_id)
       reply = send_cmd("*is", remocon_id)
-      reply[1] == "ok" ? true : get_error(reply)
+      true
     end
   
     #
@@ -44,7 +44,7 @@ module IRemoconControl
     #
     def ic(remocon_id)
       reply = send_cmd("*ic", remocon_id)
-      reply[1] == "ok" ? true : get_error(reply)
+      true
     end
   
     #
@@ -52,7 +52,7 @@ module IRemoconControl
     #
     def cc
       reply = send_cmd("*cc")
-      reply[1] == "ok" ? true : get_error(reply)
+      true
     end
   
     #
@@ -60,7 +60,7 @@ module IRemoconControl
     #
     def tm(remocon_id, time, repeat_interval = 0)
       reply = send_cmd("*tm", remocon_id, time.to_i, repeat_interval)
-      reply[1] == "ok" ? true : get_error(reply)
+      true
     end
   
     #
@@ -68,7 +68,7 @@ module IRemoconControl
     #
     def tl
       reply = send_cmd("*tl")
-      reply[1] == "ok" ? reply[3..-1].map(&:to_i).each_slice(4).to_a : get_error(reply)
+      reply[3..-1].map(&:to_i).each_slice(4).to_a
     end
   
     #
@@ -76,7 +76,7 @@ module IRemoconControl
     #
     def td(timer_id)
       reply = send_cmd("*td", timer_id)
-      reply[1] == "ok" ? true : get_error(reply)
+      true
     end
   
     #
@@ -84,7 +84,7 @@ module IRemoconControl
     #
     def ts(time)
       reply = send_cmd("*ts", time.to_i)
-      reply[1] == "ok" ? true : get_error(reply)
+      true
     end
   
     #
@@ -92,7 +92,7 @@ module IRemoconControl
     #
     def tg
       reply = send_cmd("*tg")
-      reply[1] == "ok" ? reply[2].to_i : get_error(reply)
+      reply[2].to_i
     end
   
     #
@@ -100,7 +100,7 @@ module IRemoconControl
     #
     def vr
       reply = send_cmd("*vr")
-      reply[1] == "err" ? get_error(reply) : reply[0]
+      reply[0]
     end
     
     private
@@ -112,12 +112,23 @@ module IRemoconControl
         @logger.warn "#{cmds} -> #{e}"
         raise e
       end
-      @logger.info "#{cmds} -> #{reply}"
+      
+      if error? reply
+        error = get_error reply
+        @logger.warn "#{cmds} -> #{error}"
+        raise error
+      else
+        @logger.info "#{cmds} -> #{reply}"
+      end
       reply
     end
     
     def _send_cmd(*cmds)
-      telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
+      begin
+        telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
+      rescue
+        raise StandardError.new("IRemocon Connection Error - #{@host}:#{port}")
+      end
       
       code = ""
       telnet.cmd(cmds.join(";")) do |res|
@@ -127,6 +138,10 @@ module IRemoconControl
       
       telnet.close
       return code.chomp.split(";")
+    end
+    
+    def error?(reply)
+      reply[1] == "err"
     end
     
     def get_error(reply)
