@@ -5,7 +5,7 @@ require 'iremocon_control/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "iremocon_control"
-  spec.version       = IremoconControl::VERSION
+  spec.version       = IRemoconControl::VERSION
   spec.authors       = ["YutaTanaka"]
   spec.email         = ["yuta84q.ihcarok@gmail.com"]
   spec.summary       = "send commands to iremocon"
