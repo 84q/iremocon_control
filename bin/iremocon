@@ -1,3 +1,70 @@
 #!/usr/bin/env ruby
+#encoding: utf-8
 
 require 'iremocon_control'
+require 'optparse'
+require 'yaml'
+
+Version = IRemoconControl::VERSION
+
+def main
+  #ポートはデフォルトで51013
+  host, port, method = nil, 51013, :is
+  
+  #デフォルトで ~/.iremoconrc を読み込む
+  conf = YAML.load_file(File.expand_path("~/.iremoconrc")) rescue nil
+  if conf
+    host = conf["host"] if conf["host"]
+    port = conf["port"] if conf["port"]
+  end
+  
+  # オプションの解析
+  opt = OptionParser.new
+  
+  # 設定ファイルの指定
+  opt.on('-f FILE', '--file=FILE', '読み込む設定ファイルの指定') do |f|
+    begin
+      conf = YAML.load_file(File.expand_path(f))
+    rescue
+      STDERR.puts "file [#{f}] doesn't exist or isn't YAML file."
+      exit
+    end
+    host = conf["host"] if conf["host"]
+    port = conf["port"] if conf["port"]
+  end
+  
+  # ホスト名指定
+  opt.on('-h HOST', '--host=HOST', 'iremoconのホスト名') do |h|
+    host = h
+  end
+  
+  # ポート番号指定
+  opt.on('-p PORT', '--port=PORT', 'iremoconのポート番号(デフォルト:51013)') do |p|
+    port = p.to_i
+  end
+  
+  # コマンドの指定
+  opt.on('--au', 'iremoconとの接続の確認') { method = :au } # 接続の確認
+  opt.on('--ts', 'iremoconの現在時刻設定') { method = :ts } # 現在時刻設定
+  opt.on('--tg', 'iremoconの現在時刻取得') { method = :tg } # 現在時刻取得
+  opt.on('--vr', 'iremoconのバージョン取得') { method = :vr } # バージョン取得
+  opt.on('--is', 'iremoconから赤外線送信(デフォルト)') { method = :is } # 赤外線送信(デフォルト)
+  
+  opt.parse!(ARGV)
+  
+  ir = IRemoconControl::IRemocon.new(host, port, logger:STDERR)
+  
+  # 引数の数チェック
+  method_args = ir.method(method).parameters
+  if ARGV.size != method_args.size
+    puts "Command [#{method}] needs #{method_args.size} params"
+    exit
+  end
+  
+  # コマンド送信
+  puts ir.send(method, *ARGV) rescue nil
+end
+
+main if __FILE__ == $0
+
+# vim: sw=2 ts=2 sts=2 et
