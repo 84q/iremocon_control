@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["yuta84q.ihcarok@gmail.com"]
   spec.summary       = "send commands to iremocon"
   spec.description   = "send commands to iremocon"
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/84q/iremocon_control"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
