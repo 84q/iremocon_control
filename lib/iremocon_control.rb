@@ -144,11 +144,8 @@ module IRemoconControl
     end
     
     def _send_cmd(*cmds)
-      begin
-        telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
-      rescue
-        raise StandardError.new("IRemocon Connection Error - #{@host}:#{port}")
-      end
+      telnet = Net::Telnet.new('Host' => @host, 'Port' => @port) rescue
+        raise TelnetConnectionError.new("IRemocon Connection Error - #{@host}:#{port}")
       
       code = ""
       telnet.cmd(cmds.join(";")) do |res|
@@ -156,7 +153,7 @@ module IRemoconControl
         break if res =~ /\n$/
       end
       
-      telnet.close
+      telnet.close raise nil
       return code.chomp.split(";")
     end
     
@@ -170,6 +167,8 @@ module IRemoconControl
       return IRemoconError.new cmd, err_no
     end
   end
+  
+  class TelnetConnectionError < StandardError; end
 end
 
 # vim: sw=2 ts=2 sts=2 et
