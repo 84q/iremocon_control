@@ -20,15 +20,15 @@ Or install it yourself as:
 ## Usage
 
 ### Ruby上からIRemoconを操作する場合
-1. モジュールをロードします。
+モジュールをロードします。
 
     require 'iremocon_control'
 
-2. IRemoconオブジェクトを作成します。
+IRemoconオブジェクトを作成します。
 
     iremocon = IRemoconControl::IRemocon.new '192.168.0.100'
 
-3. IRemoconオブジェクトに対してコマンドを発行します。
+IRemoconオブジェクトに対してコマンドを発行します。
 
     # リモコンNo.1として登録した赤外線を送信
     iremocon.is 1
