@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
 
-require 'iremocon_control'
+require_relative '../lib/iremocon_control.rb'
 require 'optparse'
 require 'yaml'
 
