@@ -96,7 +96,7 @@ module IRemoconControl
       reply = send_cmd("*td", timer_id)
       true
     end
-  
+    
     #
     # 現在時刻設定用コマンド
     # @param [Integer] time 現在時刻
@@ -146,11 +146,7 @@ module IRemoconControl
     end
     
     def _send_cmd(*cmds)
-    begin
       telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
-    rescue
-      raise TelnetConnectionError.new("IRemocon Connection Error - #{@host}:#{@port}")
-    end
       
       code = ""
       telnet.cmd(cmds.join(";")) do |res|
@@ -159,13 +155,22 @@ module IRemoconControl
       end
       
       telnet.close
+    rescue
+      raise TelnetConnectionError.new("IRemocon Connection Error - #{@host}:#{@port}")
+    ensure
       return code.chomp.split(";")
     end
     
+    #
+    # IRemoconからの戻り値がエラーか
+    #
     def error?(reply)
       reply[1] == "err"
     end
     
+    #
+    # IRemoconからのエラーの返す
+    #
     def get_error(reply)
       cmd = reply[0]
       err_no = reply[2]
