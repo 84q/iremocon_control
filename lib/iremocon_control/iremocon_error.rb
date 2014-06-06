@@ -23,6 +23,22 @@ module IRemoconControl
     def inspect
       "[#{@command}-#{@code}] #{@desctiption}"
     end
+    
+    #
+    # IRemoconからの戻り値がエラーか
+    #
+    def self.error?(reply)
+      reply[1] == "err"
+    end
+    
+    #
+    # IRemoconからのエラーの返す
+    #
+    def self.get_error(reply)
+      cmd = reply[0]
+      err_no = reply[2]
+      return IRemoconError.new cmd, err_no
+    end
   end
 end
 

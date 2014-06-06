@@ -135,8 +135,8 @@ module IRemoconControl
         raise e
       end
       
-      if error? reply
-        error = get_error reply
+      if IRemoconError.error? reply
+        error = IRemoconError.get_error reply
         @logger.warn "#{cmds} -> #{error}"
         raise error
       else
@@ -146,35 +146,20 @@ module IRemoconControl
     end
     
     def _send_cmd(*cmds)
-      telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
-      
-      code = ""
-      telnet.cmd(cmds.join(";")) do |res|
-        code << res;
-        break if res =~ /\n$/
+      begin
+        telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
+        
+        code = ""
+        telnet.cmd(cmds.join(";")) do |res|
+          code << res;
+          break if res =~ /\n$/
+        end
+        
+        telnet.close
+      rescue
+        raise TelnetConnectionError.new("IRemocon Connection Error - #{@host}:#{@port}")
       end
-      
-      telnet.close
-    rescue
-      raise TelnetConnectionError.new("IRemocon Connection Error - #{@host}:#{@port}")
-    ensure
       return code.chomp.split(";")
-    end
-    
-    #
-    # IRemoconからの戻り値がエラーか
-    #
-    def error?(reply)
-      reply[1] == "err"
-    end
-    
-    #
-    # IRemoconからのエラーの返す
-    #
-    def get_error(reply)
-      cmd = reply[0]
-      err_no = reply[2]
-      return IRemoconError.new cmd, err_no
     end
   end
   
