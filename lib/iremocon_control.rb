@@ -78,11 +78,13 @@ module IRemoconControl
   
     #
     # タイマー一覧取得用コマンド
-    # @return [Array<Array<Integer>>] タイマー(タイマーID,リモコンID,発光時刻,繰り返し秒数)一覧
+    # @return [Array<IRemoconTimer>] タイマー一覧
     #
     def tl
       reply = send_cmd("*tl")
-      reply[3..-1].map(&:to_i).each_slice(4).to_a
+      reply[3..-1].map(&:to_i).each_slice(4).map {|timer_id, remocon_id, time, repeat_interval|
+        IRemoconTimer.new(timer_id, remocon_id, Time.at(time), repeat_interval);
+      }
     end
   
     #
@@ -144,8 +146,11 @@ module IRemoconControl
     end
     
     def _send_cmd(*cmds)
-      telnet = Net::Telnet.new('Host' => @host, 'Port' => @port) rescue
-        raise TelnetConnectionError.new("IRemocon Connection Error - #{@host}:#{port}")
+    begin
+      telnet = Net::Telnet.new('Host' => @host, 'Port' => @port)
+    rescue
+      raise TelnetConnectionError.new("IRemocon Connection Error - #{@host}:#{@port}")
+    end
       
       code = ""
       telnet.cmd(cmds.join(";")) do |res|
@@ -153,7 +158,7 @@ module IRemoconControl
         break if res =~ /\n$/
       end
       
-      telnet.close raise nil
+      telnet.close
       return code.chomp.split(";")
     end
     
@@ -169,6 +174,20 @@ module IRemoconControl
   end
   
   class TelnetConnectionError < StandardError; end
+  
+  class IRemoconTimer
+    attr_reader :timer_id, :remocon_id, :time, :repeat_interval
+    
+    def initialize(timer_id, remocon_id, time, repeat_interval)
+      @timer_id, @remocon_id, @time, @repeat_interval = timer_id, remocon_id, Time.at(time), repeat_interval;
+    end
+    
+    def to_s
+      "remocon_id : #{@remocon_id}, next : #{@time}, repeat : #{@repeat_interval}"
+    end
+    
+    alias_method :inspect, :to_s
+  end
 end
 
 # vim: sw=2 ts=2 sts=2 et
