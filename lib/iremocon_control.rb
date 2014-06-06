@@ -29,6 +29,8 @@ module IRemoconControl
     #
     # 接続の確認用コマンド
     # @return [TrueClass] 常にtrue
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def au
       reply = send_cmd("*au")
@@ -39,6 +41,8 @@ module IRemoconControl
     # 赤外線発光用コマンド
     # @param [Integer] remocon_id 発行するリモコンID
     # @return [TrueClass] 常にtrue
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def is(remocon_id)
       reply = send_cmd("*is", remocon_id)
@@ -49,6 +53,8 @@ module IRemoconControl
     # リモコン学習開始用コマンド
     # @param [Integer] remocon_id 学習するリモコンID
     # @return [TrueClass] 常にtrue
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def ic(remocon_id)
       reply = send_cmd("*ic", remocon_id)
@@ -58,6 +64,8 @@ module IRemoconControl
     #
     # リモコン学習中止用コマンド
     # @return [TrueClass] 常にtrue
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def cc
       reply = send_cmd("*cc")
@@ -70,6 +78,8 @@ module IRemoconControl
     # @param [Time] time 次回の日時
     # @param [Time] repeat_interval 繰り返し秒数(繰り返さない場合、0)
     # @return [TrueClass] 常にtrue
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def tm(remocon_id, time, repeat_interval = 0)
       reply = send_cmd("*tm", remocon_id, time.to_i, repeat_interval)
@@ -79,6 +89,8 @@ module IRemoconControl
     #
     # タイマー一覧取得用コマンド
     # @return [Array<IRemoconTimer>] タイマー一覧
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def tl
       reply = send_cmd("*tl")
@@ -91,6 +103,8 @@ module IRemoconControl
     # タイマー解除用コマンド
     # @param [Integer] timer_id 解除するタイマーID
     # @return [TrueClass] 常にtrue
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def td(timer_id)
       reply = send_cmd("*td", timer_id)
@@ -110,6 +124,8 @@ module IRemoconControl
     #
     # 現在時刻取得用コマンド
     # @return [Time] 現在時刻
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def tg
       reply = send_cmd("*tg")
@@ -119,6 +135,8 @@ module IRemoconControl
     #
     # ファームバージョン番号の取得用コマンド
     # @return [String] バージョン番号
+    # @raise [TelnetConnectionError] 通信エラーが発生した場合
+    # @raise [IRemoconError] IRemoconからエラーが帰ってきた場合
     #
     def vr
       reply = send_cmd("*vr")
