@@ -54,19 +54,19 @@ Or install it yourself as:
     $ iremocon 1
 
 #### is(赤外線送信)以外のコマンドの利用
-* iremoconとの接続の確認
+iremoconとの接続の確認
 
     $ iremocon --au
 
-* iremoconの現在時刻設定(引数 : 設定する時刻のUnixTime)
+iremoconの現在時刻設定(引数 : 設定する時刻のUnixTime)
 
     $ iremocon --ts `date '+%s'`
 
-* iremoconの現在時刻取得
+iremoconの現在時刻取得
 
     $ iremocon --tg
 
-* iremoconのバージョン番号取得
+iremoconのバージョン番号取得
 
     $ iremocon --vr
 
