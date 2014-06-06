@@ -107,11 +107,11 @@ module IRemoconControl
   
     #
     # 現在時刻取得用コマンド
-    # @return [Integer] 現在時刻
+    # @return [Time] 現在時刻
     #
     def tg
       reply = send_cmd("*tg")
-      reply[2].to_i
+      Time.at(reply[2].to_i)
     end
   
     #
