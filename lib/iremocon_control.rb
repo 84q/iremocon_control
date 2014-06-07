@@ -143,6 +143,42 @@ module IRemoconControl
       reply[0]
     end
     
+    #
+    # ネットワーク上からiRemoconを見つける
+    # @param num_iremocon [Integer] ネットワーク上のiRemoconの数
+    # @param timeout [Integer] 探索のタイムアウト
+    # @return [Array<String>] iRemoconのIPアドレス文字列の配列
+    #
+    def self.find(num_iremocon = 1, timeout = 5)
+      sock = UDPSocket.open()
+      sock.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, 1)
+      sock.bind("0.0.0.0", 0)
+      
+      # メッセージをブロードキャスト
+      sock.send("FIND", 0, "<broadcast>", 1460)
+      
+      ips = []
+      begin
+        # タイムアウト設定
+        timeout(timeout) do
+          # タイムアウトまで繰り返す
+          while true
+            # 受信待ち
+            mesg, sockaddr = sock.recvfrom(512)
+            # iRemoconが見つかったら登録
+            ips << sockaddr[3] if sockaddr and sockaddr[3]
+            # num_iremocon個見つかったら修了
+            break if ips.uniq!.size == num_iremocon
+          end
+        end
+      rescue
+        # タイムアウトまでnum_iremocon個見つからなかった場合
+        nil
+      end
+      
+      ips
+    end
+    
     private
     
     def send_cmd(*cmds)

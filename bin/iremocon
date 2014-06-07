@@ -52,6 +52,7 @@ def main
   
   opt.parse!(ARGV)
   
+  host = IRemoconControl::IRemocon.find[0] if(host.nil? or host == "find")
   ir = IRemoconControl::IRemocon.new(host, port, logger:STDERR)
   
   # 引数の数チェック
