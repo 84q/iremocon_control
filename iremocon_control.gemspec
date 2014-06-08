@@ -8,8 +8,13 @@ Gem::Specification.new do |spec|
   spec.version       = IRemoconControl::VERSION
   spec.authors       = ["YutaTanaka"]
   spec.email         = ["yuta84q.ihcarok@gmail.com"]
-  spec.summary       = "send commands to iremocon"
-  spec.description   = "send commands to iremocon"
+  spec.summary       = "iRemoconをコントロールします。"
+  spec.description   = <<-'EOS'
+  iRemoconに各種コマンドを送ることでコントロールします。
+  赤外線送信、タイマ登録など一通りの機能を備えています。
+  Unixコマンド"iremocon"からコントロールすることもできます。
+  ネットワーク上からiRemoconを探す機能も備えており、ほとんど設定なしで利用できます。
+  EOS
   spec.homepage      = "https://github.com/84q/iremocon_control"
   spec.license       = "MIT"
 
