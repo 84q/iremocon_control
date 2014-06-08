@@ -219,6 +219,9 @@ module IRemoconControl
   
   class TelnetConnectionError < StandardError; end
   
+  #
+  # iRemoconのTimerを管理するクラス
+  #
   class IRemoconTimer
     attr_reader :timer_id, :remocon_id, :time, :repeat_interval
     
